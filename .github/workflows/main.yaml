@@ -1,47 +1,33 @@
-name: Update README
+name: README build
 
 on:
   push:
     branches:
       - master
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '0 */3 * * *'
 
 jobs:
-  update-readme:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v2
+      - name: checkout
+        uses: actions/checkout@v1
+      - name: setup node
+        uses: actions/setup-node@v1
         with:
-          node-version: '14'
-
-      - name: Cache Node.js modules
-        uses: actions/cache@v2
+          node-version: '13.x'
+      - name: cache
+        uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      
+          key: ${{ runner.os }}-js-${{ hashFiles('package-lock.json') }}
       - name: Install dependencies
         run: npm install
-
       - name: Generate README file
         run: node index.js
-        env:
-          OPEN_WEATHER_MAP_KEY: ${{ secrets.OPEN_WEATHER_MAP_KEY }}
-
-      - name: Commit and push changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add README.md
-          git commit -m "Automated README update"
-          git push
+      - name: Push new README.md
+        uses: mikeal/publish-to-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GT_TOKEN }}
