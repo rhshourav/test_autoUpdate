@@ -18,8 +18,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '13.x'
-      - name: Cache dependencies and build outputs to improve workflow execution time.
-        uses: actions/cache@v1
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        id: attest
         with:
           path: node_modules
           key: ${{ runner.os }}-js-${{ hashFiles('package-lock.json') }}
